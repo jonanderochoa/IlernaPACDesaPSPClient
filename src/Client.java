@@ -1,33 +1,40 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Client {
 
     private final String HOST = "localhost";
-    private final int PUERTO = 1234;
+    private final int PORT = 1234;
     private Socket socket;
+    private DataInputStream messageFromServer;
+    private DataOutputStream messageToServer;
+    private BufferedReader bufferFromServer;
 
     public Client() throws IOException {
-        socket = new Socket(HOST, PUERTO);
+        socket = new Socket(HOST, PORT);
+        messageFromServer = new DataInputStream(socket.getInputStream());
+        messageToServer = new DataOutputStream(socket.getOutputStream());
+        bufferFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
-    public void iniciarCliente() throws IOException {
+    public String receiveFromServer() throws IOException {
+        return messageFromServer.readUTF();
+    }
 
-        // Recibe del servidor
-        DataInputStream entradaDelServidor = new DataInputStream(socket.getInputStream());
-        System.out.println(entradaDelServidor.readUTF());
+    public void sendToServer(String message) throws IOException {
+        messageToServer.writeUTF(message);
+    }
 
-        // Envio al servidor
-        DataOutputStream salidaHaciaServidor = new DataOutputStream(socket.getOutputStream());
-        for(int i = 0; i < 3; i ++){
-            salidaHaciaServidor.writeUTF("Este es el mensaje numero: " + i);
+    public void receiveBufferServer() throws IOException {
+        String mensajeDeCliente = bufferFromServer.readLine();
+        while(mensajeDeCliente != null){
+            System.out.println(mensajeDeCliente);
         }
-        socket.close();
-
     }
 
-
+    public void closeSocket() throws IOException {
+        if(socket != null){
+            socket.close();
+        }
+    }
 }
