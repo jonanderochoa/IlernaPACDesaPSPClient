@@ -1,4 +1,6 @@
 /**
+ * Clase que contiene constantes
+ *
  * @project IlernaPACDesaPSPClient
  * @author: jonan on 16/11/2019
  */
